@@ -1,4 +1,4 @@
-"""Keycloak configuration using FastMCP's JWT verification."""
+"""Keycloak configuration WITHOUT audience validation (for testing)."""
 
 import os
 from fastmcp.server.auth.providers.jwt import JWTVerifier
@@ -10,13 +10,11 @@ KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM", "mcp-demo")
 KEYCLOAK_BASE_URL = os.getenv("KEYCLOAK_BASE_URL", "http://localhost:8080")
 KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
 KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
-KEYCLOAK_AUDIENCE = os.getenv("KEYCLOAK_AUDIENCE", "mcp-server")
 BASE_URL = os.getenv("RESOURCE_ID", "http://localhost:8000")
 
 # Keycloak OIDC endpoints
 KEYCLOAK_ISSUER = f"{KEYCLOAK_BASE_URL}/realms/{KEYCLOAK_REALM}"
 KEYCLOAK_JWKS_URI = f"{KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
-
 
 # Define supported scopes for this MCP server
 SUPPORTED_SCOPES = [
@@ -28,22 +26,9 @@ SUPPORTED_SCOPES = [
 
 def create_auth_provider() -> RemoteAuthProvider:
     """
-    Create Keycloak authentication provider using FastMCP's JWT verification.
+    Create Keycloak authentication provider WITHOUT audience validation.
     
-    Since FastMCP only provides Auth0Provider as a high-level provider,
-    for Keycloak we use the lower-level JWTVerifier + RemoteAuthProvider.
-    
-    This configuration:
-    - Validates JWT tokens from Keycloak using JWKS
-    - Verifies issuer, audience, and algorithm
-    - Checks required scopes
-    - Works with Keycloak's standard OAuth 2.0 / OIDC implementation
-    
-    Returns:
-        RemoteAuthProvider: Configured authentication provider for Keycloak
-    
-    Raises:
-        ValueError: If required configuration is missing
+    Use this for testing if you're having audience mismatch issues.
     """
     if not KEYCLOAK_CLIENT_ID:
         raise ValueError(
@@ -51,20 +36,22 @@ def create_auth_provider() -> RemoteAuthProvider:
             "Please set KEYCLOAK_CLIENT_ID in .env"
         )
     
-    print("🔐 Configuring Keycloak authentication:")
+    print("🔐 Configuring Keycloak authentication (NO audience validation):")
     print(f"   Issuer: {KEYCLOAK_ISSUER}")
     print(f"   JWKS URI: {KEYCLOAK_JWKS_URI}")
-    print(f"   Audience: {KEYCLOAK_AUDIENCE}")
+    print(f"   Audience: DISABLED (for testing)")
     print(f"   Scopes: {', '.join(SUPPORTED_SCOPES)}")
+    print()
+    print("⚠️  WARNING: Audience validation is disabled!")
+    print("   This is OK for testing but should be fixed for production.")
+    print()
     
-    # Create JWT verifier for Keycloak tokens
-    # Note: audience can be a string or list. If the token has ["mcp-server", "account"],
-    # JWTVerifier will accept it as long as our audience is in the list
+    # Create JWT verifier WITHOUT audience validation
     verifier = JWTVerifier(
         jwks_uri=KEYCLOAK_JWKS_URI,
         issuer=KEYCLOAK_ISSUER,
-        audience=KEYCLOAK_AUDIENCE,  # Will match if "mcp-server" is in the token's audience array
-        algorithm="RS256",  # Keycloak uses RS256 by default
+        # audience=None,  # Skip audience validation
+        algorithm="RS256",
         required_scopes=SUPPORTED_SCOPES,
     )
     
