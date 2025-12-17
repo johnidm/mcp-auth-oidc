@@ -109,7 +109,7 @@ if [ -n "$CLIENT_SECRET" ]; then
       -d "client_secret=$CLIENT_SECRET" \
       -d "username=testuser" \
       -d "password=testpassword" \
-      -d "scope=openid read:notes write:notes use:calculator")
+      -d "scope=openid profile email claudeai read:notes write:notes use:calculator")
     
     ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.access_token')
     

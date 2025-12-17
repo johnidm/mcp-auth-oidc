@@ -18,9 +18,13 @@ KEYCLOAK_JWKS_URI = f"{KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
 
 # Define supported scopes for this MCP server
 SUPPORTED_SCOPES = [
-    "read:notes",
-    "write:notes",
-    "use:calculator",
+    "openid",           # Standard OIDC scope
+    "profile",          # Standard OIDC scope for user profile
+    "email",            # Standard OIDC scope for email
+    "claudeai",         # Custom scope for Claude AI
+    "read:notes",       # Custom scope for reading notes
+    "write:notes",      # Custom scope for writing notes
+    "use:calculator",   # Custom scope for calculator
 ]
 
 
