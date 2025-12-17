@@ -17,14 +17,6 @@ def main():
     2. Validates required configuration
     3. Starts the FastMCP server with built-in HTTP/SSE transport
     """
-    # Validate required environment variables
-    required_vars = ["AUTH0_DOMAIN", "AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET", "AUTH0_AUDIENCE"]
-    missing_vars = [var for var in required_vars if not os.getenv(var)]
-    
-    if missing_vars:
-        print(f"Error: Missing required environment variables: {', '.join(missing_vars)}")
-        print("Please create a .env file based on .env.example")
-        sys.exit(1)
     
     # Get server configuration from environment
     host = os.getenv("SERVER_HOST", "0.0.0.0")

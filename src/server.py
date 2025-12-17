@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 from fastmcp import FastMCP
-from src.auth_config import create_auth_provider
+from src.keycloak_auth_config import create_auth_provider
 
 
 # Create Auth0 authentication provider

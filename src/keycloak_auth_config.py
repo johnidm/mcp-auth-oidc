@@ -1,7 +1,8 @@
-"""Keycloak configuration using FastMCP's OIDCProvider."""
+"""Keycloak configuration using FastMCP's JWT verification."""
 
 import os
-from fastmcp.server.auth.providers.oidc import OIDCProvider
+from fastmcp.server.auth.providers.jwt import JWTVerifier
+from fastmcp.server.auth import RemoteAuthProvider
 
 
 # Keycloak configuration from environment variables
@@ -9,11 +10,13 @@ KEYCLOAK_REALM = os.getenv("KEYCLOAK_REALM", "mcp-demo")
 KEYCLOAK_BASE_URL = os.getenv("KEYCLOAK_BASE_URL", "http://localhost:8080")
 KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
 KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
-KEYCLOAK_AUDIENCE = os.getenv("KEYCLOAK_AUDIENCE")
+KEYCLOAK_AUDIENCE = os.getenv("KEYCLOAK_AUDIENCE", "mcp-server")
 BASE_URL = os.getenv("RESOURCE_ID", "http://localhost:8000")
 
 # Keycloak OIDC endpoints
-KEYCLOAK_CONFIG_URL = f"{KEYCLOAK_BASE_URL}/realms/{KEYCLOAK_REALM}/.well-known/openid-configuration"
+KEYCLOAK_ISSUER = f"{KEYCLOAK_BASE_URL}/realms/{KEYCLOAK_REALM}"
+KEYCLOAK_JWKS_URI = f"{KEYCLOAK_ISSUER}/.well-known/jwks.json"
+
 
 # Define supported scopes for this MCP server
 SUPPORTED_SCOPES = [
@@ -23,33 +26,51 @@ SUPPORTED_SCOPES = [
 ]
 
 
-def create_auth_provider() -> OIDCProvider:
+def create_auth_provider() -> RemoteAuthProvider:
     """
-    Create Keycloak authentication provider using FastMCP's OIDC Proxy.
+    Create Keycloak authentication provider using FastMCP's JWT verification.
     
-    This uses FastMCP's built-in OIDCProvider which handles:
-    - OIDC discovery
-    - Dynamic Client Registration (DCR) proxy
-    - Token validation
-    - OAuth flow management
+    Since FastMCP only provides Auth0Provider as a high-level provider,
+    for Keycloak we use the lower-level JWTVerifier + RemoteAuthProvider.
+    
+    This configuration:
+    - Validates JWT tokens from Keycloak using JWKS
+    - Verifies issuer, audience, and algorithm
+    - Checks required scopes
+    - Works with Keycloak's standard OAuth 2.0 / OIDC implementation
     
     Returns:
-        OIDCProvider: Configured Keycloak authentication provider
+        RemoteAuthProvider: Configured authentication provider for Keycloak
+    
+    Raises:
+        ValueError: If required configuration is missing
     """
-    if not all([KEYCLOAK_CLIENT_ID, KEYCLOAK_CLIENT_SECRET]):
+    if not KEYCLOAK_CLIENT_ID:
         raise ValueError(
             "Missing required Keycloak configuration. "
-            "Please set KEYCLOAK_CLIENT_ID and KEYCLOAK_CLIENT_SECRET in .env"
+            "Please set KEYCLOAK_CLIENT_ID in .env"
         )
     
-    # Create OIDC provider with Keycloak configuration
-    auth = OIDCProvider(
-        config_url=KEYCLOAK_CONFIG_URL,
-        client_id=KEYCLOAK_CLIENT_ID,
-        client_secret=KEYCLOAK_CLIENT_SECRET,
+    print("🔐 Configuring Keycloak authentication:")
+    print(f"   Issuer: {KEYCLOAK_ISSUER}")
+    print(f"   JWKS URI: {KEYCLOAK_JWKS_URI}")
+    print(f"   Audience: {KEYCLOAK_AUDIENCE}")
+    print(f"   Scopes: {', '.join(SUPPORTED_SCOPES)}")
+    
+    # Create JWT verifier for Keycloak tokens
+    verifier = JWTVerifier(
+        jwks_uri=KEYCLOAK_JWKS_URI,
+        issuer=KEYCLOAK_ISSUER,
         audience=KEYCLOAK_AUDIENCE,
-        base_url=BASE_URL,
+        algorithm="RS256",  # Keycloak uses RS256 by default
         required_scopes=SUPPORTED_SCOPES,
+    )
+    
+    # Create remote auth provider with the JWT verifier
+    auth = RemoteAuthProvider(
+        token_verifier=verifier,
+        authorization_servers=[BASE_URL],
+        base_url=BASE_URL,
     )
     
     return auth
