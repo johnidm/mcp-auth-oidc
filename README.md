@@ -1,16 +1,22 @@
-# MCP Server with OAuth Authentication via Auth0
+# 🔐 MCP Server with OAuth Authentication via Auth0
 
-A production-ready Model Context Protocol (MCP) server with OAuth 2.1 authentication using FastMCP's built-in OIDC Proxy and Auth0 as the identity provider.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![FastMCP](https://img.shields.io/badge/FastMCP-OIDC%20Proxy-green.svg)](https://gofastmcp.com/)
+[![Auth0](https://img.shields.io/badge/Auth0-OAuth%202.1-orange.svg)](https://auth0.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MCP](https://img.shields.io/badge/MCP-Protocol-purple.svg)](https://modelcontextprotocol.io/)
 
-## Features
+> 🚀 A production-ready Model Context Protocol (MCP) server with OAuth 2.1 authentication using FastMCP's built-in OIDC Proxy and Auth0 as the identity provider.
 
-- **FastMCP OIDC Proxy**: Built-in OAuth authentication via [FastMCP's OIDCProxy](https://gofastmcp.com/servers/auth/oidc-proxy)
-- **Auth0 Integration**: Pre-configured Auth0 provider for seamless authentication
-- **Dynamic Client Registration**: Proxies DCR for Auth0 to work with Claude.ai
-- **Demo Tools**: Calculator and notes management tools for testing
-- **HTTP/SSE Transport**: Built-in server with automatic routing and auth
+## ✨ Features
 
-## Architecture
+- 🔒 **FastMCP OIDC Proxy**: Built-in OAuth authentication via [FastMCP's OIDCProxy](https://gofastmcp.com/servers/auth/oidc-proxy)
+- 🌐 **Auth0 Integration**: Pre-configured Auth0 provider for seamless authentication
+- 🔄 **Dynamic Client Registration**: Proxies DCR for Auth0 to work with Claude.ai
+- 🛠️ **Demo Tools**: Calculator and notes management tools for testing
+- 📡 **HTTP/SSE Transport**: Built-in server with automatic routing and auth
+
+## 🏗️ Architecture
 
 FastMCP's OIDC Proxy acts as a bridge between Claude.ai and Auth0:
 
@@ -40,22 +46,22 @@ FastMCP's OIDC Proxy acts as a bridge between Claude.ai and Auth0:
 └──────────────────────────────────┘
 ```
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Python 3.10 or higher
-- Auth0 account (free tier works)
-- Auth0 application configured with redirect URI
+- 🐍 Python 3.10 or higher
+- 🔑 Auth0 account (free tier works)
+- ⚙️ Auth0 application configured with redirect URI
 
-## Installation
+## 📦 Installation
 
-### 1. Clone the Repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone <your-repo-url>
 cd mcp-auth-oidcO
 ```
 
-### 2. Install Dependencies
+### 2️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -69,16 +75,16 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure Auth0
+### 3️⃣ Configure Auth0
 
-#### Create an Auth0 Application
+#### 🎯 Create an Auth0 Application
 
 1. Log in to your [Auth0 Dashboard](https://manage.auth0.com/)
 2. Navigate to **Applications** → **Create Application**
 3. Choose **Regular Web Application**
 4. Note your **Domain**, **Client ID**, and **Client Secret**
 
-#### Configure Redirect URI
+#### 🔗 Configure Redirect URI
 
 In your Auth0 application settings, add the callback URL:
 
@@ -92,16 +98,16 @@ http://localhost:8000/auth/callback
 https://your-domain.com/auth/callback
 ```
 
-#### Create an API (for audience)
+#### 🎫 Create an API (for audience)
 
 1. Navigate to **APIs** → **Create API**
 2. Set an identifier (e.g., `https://dev-zilqiezmsk6ylig2.us.auth0.com/api/v2/`)
 3. Add the following scopes:
-   - `read:notes` - Read notes
-   - `write:notes` - Create, update, delete notes
-   - `use:calculator` - Use calculator tools
+   - 📖 `read:notes` - Read notes
+   - ✍️ `write:notes` - Create, update, delete notes
+   - 🧮 `use:calculator` - Use calculator tools
 
-### 4. Configure Environment Variables
+### 4️⃣ Configure Environment Variables
 
 Create a `.env` file in the project root:
 
@@ -118,7 +124,7 @@ SERVER_HOST=0.0.0.0
 SERVER_PORT=8000
 ```
 
-**Demo credentials** (pre-configured):
+**✨ Demo credentials** (pre-configured):
 ```env
 AUTH0_DOMAIN=dev-zilqiezmsk6ylig2.us.auth0.com
 AUTH0_CLIENT_ID=GsJfBMVGn5cDgWQwTiq91SIQBYxQccJA
@@ -129,7 +135,7 @@ SERVER_HOST=0.0.0.0
 SERVER_PORT=8000
 ```
 
-## Running the Server
+## 🚀 Running the Server
 
 Start the server:
 
@@ -153,34 +159,34 @@ Starting server with FastMCP's built-in HTTP/SSE transport...
 ```
 
 The server will start on `http://localhost:8000` with the following endpoints:
-- **MCP/SSE**: `/mcp/sse` or `/sse` (authenticated)
-- **Auth Callback**: `/auth/callback` (OAuth redirect)
-- **Consent**: `/auth/consent` (user authorization)
+- 📡 **MCP/SSE**: `/mcp/sse` or `/sse` (authenticated)
+- 🔄 **Auth Callback**: `/auth/callback` (OAuth redirect)
+- ✅ **Consent**: `/auth/consent` (user authorization)
 
-## Available Tools
+## 🛠️ Available Tools
 
-### Calculator Tools
+### 🧮 Calculator Tools
 
 All calculator tools require the `use:calculator` scope:
 
-1. **add_numbers(a, b)** - Add two numbers
-2. **subtract_numbers(a, b)** - Subtract b from a
-3. **multiply_numbers(a, b)** - Multiply two numbers
-4. **divide_numbers(a, b)** - Divide a by b
+1. **add_numbers(a, b)** ➕ Add two numbers
+2. **subtract_numbers(a, b)** ➖ Subtract b from a
+3. **multiply_numbers(a, b)** ✖️ Multiply two numbers
+4. **divide_numbers(a, b)** ➗ Divide a by b
 
-### Notes Tools
+### 📝 Notes Tools
 
 Notes tools require either `read:notes` or `write:notes` scope:
 
-1. **create_note(title, content)** - Create a new note (requires `write:notes`)
-2. **read_note(note_id)** - Read a specific note (requires `read:notes`)
-3. **list_notes()** - List all notes (requires `read:notes`)
-4. **update_note(note_id, title, content)** - Update a note (requires `write:notes`)
-5. **delete_note(note_id)** - Delete a note (requires `write:notes`)
+1. **create_note(title, content)** ✍️ Create a new note (requires `write:notes`)
+2. **read_note(note_id)** 📖 Read a specific note (requires `read:notes`)
+3. **list_notes()** 📋 List all notes (requires `read:notes`)
+4. **update_note(note_id, title, content)** 📝 Update a note (requires `write:notes`)
+5. **delete_note(note_id)** 🗑️ Delete a note (requires `write:notes`)
 
-## Connecting to Claude.ai
+## 🔌 Connecting to Claude.ai
 
-### Method 1: Claude.ai Web Interface
+### 🌐 Method 1: Claude.ai Web Interface
 
 1. Open [Claude.ai](https://claude.ai)
 2. Go to Settings → Integrations → Model Context Protocol
@@ -192,7 +198,7 @@ Notes tools require either `read:notes` or `write:notes` scope:
    - Request consent for the required scopes
    - Connect to your MCP server with a valid access token
 
-### Method 2: Using ngrok for Remote Access
+### 🌍 Method 2: Using ngrok for Remote Access
 
 If Claude.ai needs to access your local server over the internet:
 
@@ -209,7 +215,7 @@ If Claude.ai needs to access your local server over the internet:
 5. Restart the server
 6. Use the ngrok URL in Claude.ai: `https://your-ngrok-id.ngrok.io`
 
-### Method 3: Claude Desktop App
+### 💻 Method 3: Claude Desktop App
 
 For the Claude Desktop application, add to your MCP configuration:
 
@@ -230,27 +236,77 @@ For the Claude Desktop application, add to your MCP configuration:
 }
 ```
 
-## How It Works
+## 🔍 Testing with MCP Inspector
 
-### OAuth Flow with OIDC Proxy
+The [MCP Inspector](https://github.com/modelcontextprotocol/inspector) is an interactive developer tool for testing and debugging your OAuth-enabled MCP server.
 
-1. **Client Registration**: Claude.ai sends a DCR request to FastMCP
-2. **Proxy DCR**: FastMCP proxies the registration (Auth0 doesn't support DCR natively)
-3. **Authorization**: User is redirected to Auth0 for authentication
-4. **Consent**: User authorizes the scopes requested by Claude.ai
-5. **Token Exchange**: FastMCP exchanges the authorization code for tokens
-6. **Token Validation**: FastMCP validates tokens using Auth0's OIDC configuration
-7. **Tool Access**: Authenticated requests can access protected MCP tools
+### ⚡ Quick Start
 
-### Key Benefits of OIDC Proxy
+1. **Start your server**:
+   ```bash
+   python run.py
+   ```
 
-- **No Manual Registration**: Clients register dynamically
-- **Automatic Token Validation**: JWT verification via Auth0's JWKS
-- **Scope-Based Authorization**: Tools protected by OAuth scopes
-- **Consent Flow**: Users see and approve what clients can access
-- **Works with Any OIDC Provider**: Not just Auth0
+2. **Launch MCP Inspector** (in a new terminal):
+   ```bash
+   npx @modelcontextprotocol/inspector
+   ```
+   
+   This will open the Inspector at `http://localhost:6274`
 
-## Project Structure
+3. **Configure connection** in the Inspector UI:
+   - **Transport**: Select "HTTP with SSE"
+   - **Server URL**: `http://localhost:8000/mcp`
+   - **OAuth Scopes**: `read:notes write:notes use:calculator`
+
+4. **Update Auth0 redirect URI**:
+   - Add `http://localhost:6274/oauth/callback` to your Auth0 application's Allowed Callback URLs
+
+5. **Connect and test**:
+   - Click "Connect" to initiate OAuth flow
+   - Authenticate with Auth0
+   - Test calculator and notes tools interactively
+
+### 🎯 What You Can Do with Inspector
+
+- ✅ Test OAuth authentication flow step-by-step
+- ✅ Call MCP tools with custom parameters
+- ✅ View detailed request/response data
+- ✅ Debug authentication and authorization issues
+- ✅ Verify scope-based access control
+- ✅ Test error handling and edge cases
+
+### 📚 Detailed Guide
+
+For comprehensive testing instructions, including:
+- Step-by-step OAuth flow testing
+- Example tool calls with expected results
+- Common issues and solutions
+- Advanced testing scenarios
+
+See the complete [MCP Inspector Testing Guide](MCP_INSPECTOR_GUIDE.md).
+
+## 🔄 How It Works
+
+### 🔐 OAuth Flow with OIDC Proxy
+
+1. **Client Registration** 📝 Claude.ai sends a DCR request to FastMCP
+2. **Proxy DCR** 🔄 FastMCP proxies the registration (Auth0 doesn't support DCR natively)
+3. **Authorization** 🔑 User is redirected to Auth0 for authentication
+4. **Consent** ✅ User authorizes the scopes requested by Claude.ai
+5. **Token Exchange** 🎫 FastMCP exchanges the authorization code for tokens
+6. **Token Validation** ✔️ FastMCP validates tokens using Auth0's OIDC configuration
+7. **Tool Access** 🛠️ Authenticated requests can access protected MCP tools
+
+### 🌟 Key Benefits of OIDC Proxy
+
+- 🚀 **No Manual Registration**: Clients register dynamically
+- ✅ **Automatic Token Validation**: JWT verification via Auth0's JWKS
+- 🔒 **Scope-Based Authorization**: Tools protected by OAuth scopes
+- 👤 **Consent Flow**: Users see and approve what clients can access
+- 🌐 **Works with Any OIDC Provider**: Not just Auth0
+
+## 📁 Project Structure
 
 ```
 mcp-auth-oidcO/
@@ -270,19 +326,19 @@ mcp-auth-oidcO/
 └── TESTING.md              # Testing guide
 ```
 
-## Development
+## 👨‍💻 Development
 
-### Code Structure
+### 📝 Code Structure
 
 The server is built with three simple files:
 
-1. **`auth_config.py`** - Configures Auth0Provider
-2. **`server.py`** - Defines MCP tools with `@mcp.tool()` decorator
-3. **`main.py`** - Starts the FastMCP HTTP server
+1. **`auth_config.py`** 🔧 Configures Auth0Provider
+2. **`server.py`** 🛠️ Defines MCP tools with `@mcp.tool()` decorator
+3. **`main.py`** 🚀 Starts the FastMCP HTTP server
 
 That's it! FastMCP handles all the routing, authentication, and SSE automatically.
 
-### Adding New Tools
+### ➕ Adding New Tools
 
 To add new tools:
 
@@ -320,11 +376,11 @@ SUPPORTED_SCOPES = [
 
 4. Configure the scope in Auth0
 
-## Testing
+## 🧪 Testing
 
 See [TESTING.md](TESTING.md) for comprehensive testing instructions.
 
-### Quick Test
+### ⚡ Quick Test
 
 Start the server and verify it's running:
 
@@ -336,41 +392,41 @@ python run.py
 curl http://localhost:8000/
 ```
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
-### Server Won't Start
+### ❌ Server Won't Start
 
-- Check Python version: `python --version` (need 3.10+)
-- Verify all environment variables are set in `.env`
-- Ensure dependencies are installed: `pip install -r requirements.txt`
+- ✅ Check Python version: `python --version` (need 3.10+)
+- ✅ Verify all environment variables are set in `.env`
+- ✅ Ensure dependencies are installed: `pip install -r requirements.txt`
 
-### Authentication Fails
+### 🔐 Authentication Fails
 
-- Verify Auth0 credentials in `.env` are correct
-- Check that redirect URI in Auth0 matches `{BASE_URL}/auth/callback`
-- Ensure scopes are configured in Auth0 API
+- ✅ Verify Auth0 credentials in `.env` are correct
+- ✅ Check that redirect URI in Auth0 matches `{BASE_URL}/auth/callback`
+- ✅ Ensure scopes are configured in Auth0 API
 
-### Claude.ai Can't Connect
+### 🌐 Claude.ai Can't Connect
 
-- Verify the server is running and accessible
-- Check that the base URL is correct
-- For local testing, ensure Claude.ai can reach localhost (try ngrok)
-- Review server logs for authentication errors
+- ✅ Verify the server is running and accessible
+- ✅ Check that the base URL is correct
+- ✅ For local testing, ensure Claude.ai can reach localhost (try ngrok)
+- ✅ Review server logs for authentication errors
 
-## Security Considerations
+## 🔒 Security Considerations
 
-### For Production Deployment
+### 🚨 For Production Deployment
 
-1. **HTTPS Only**: Always use HTTPS in production
-2. **Environment Variables**: Never commit `.env` to version control
-3. **Secure Secrets**: Use a secrets manager (AWS Secrets Manager, Azure Key Vault, etc.)
-4. **Token Storage**: Configure encrypted storage backend (Redis with encryption)
-5. **JWT Signing Key**: Set explicit `jwt_signing_key` in production
-6. **Rate Limiting**: Add rate limiting middleware
-7. **Logging**: Implement comprehensive audit logs
-8. **CORS**: Configure specific origins (not `*`)
+1. 🔐 **HTTPS Only**: Always use HTTPS in production
+2. 🔑 **Environment Variables**: Never commit `.env` to version control
+3. 🗝️ **Secure Secrets**: Use a secrets manager (AWS Secrets Manager, Azure Key Vault, etc.)
+4. 💾 **Token Storage**: Configure encrypted storage backend (Redis with encryption)
+5. 🎫 **JWT Signing Key**: Set explicit `jwt_signing_key` in production
+6. ⏱️ **Rate Limiting**: Add rate limiting middleware
+7. 📝 **Logging**: Implement comprehensive audit logs
+8. 🌐 **CORS**: Configure specific origins (not `*`)
 
-### Production Configuration
+### ⚙️ Production Configuration
 
 ```python
 from fastmcp.server.auth.providers.auth0 import Auth0Provider
@@ -394,24 +450,34 @@ auth = Auth0Provider(
 )
 ```
 
-## References
+## 📚 References
 
-- [FastMCP Documentation](https://gofastmcp.com/)
-- [FastMCP OIDC Proxy Guide](https://gofastmcp.com/servers/auth/oidc-proxy)
-- [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
-- [OAuth 2.1 Draft](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1)
-- [Auth0 Documentation](https://auth0.com/docs)
+- 🚀 [FastMCP Documentation](https://gofastmcp.com/)
+- 🔐 [FastMCP OIDC Proxy Guide](https://gofastmcp.com/servers/auth/oidc-proxy)
+- 📖 [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
+- 🔒 [OAuth 2.1 Draft](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1)
+- 🌐 [Auth0 Documentation](https://auth0.com/docs)
 
-## License
+## 📄 License
 
 MIT License - feel free to use this as a template for your own MCP servers.
 
-## Support
+## 💬 Support
 
 For issues and questions:
-- FastMCP: [GitHub Issues](https://github.com/jlowin/fastmcp/issues) | [Discord](https://discord.gg/prefect)
-- Auth0: [Community Forum](https://community.auth0.com/)
+- 🚀 FastMCP: [GitHub Issues](https://github.com/jlowin/fastmcp/issues) | [Discord](https://discord.gg/prefect)
+- 🌐 Auth0: [Community Forum](https://community.auth0.com/)
 
-## Contributing
+## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature requests.
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you find it helpful! ⭐**
+
+Made with ❤️ using [FastMCP](https://gofastmcp.com/) and [Auth0](https://auth0.com/)
+
+</div>
