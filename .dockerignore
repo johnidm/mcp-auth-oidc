@@ -20,14 +20,16 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# Virtual environments
 venv/
 env/
 ENV/
 .venv
 
-# Environment Variables
+# Environment variables
 .env
+.env.local
+.env.*.local
 
 # IDE
 .vscode/
@@ -40,25 +42,21 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Git
+.git/
+.gitignore
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# Documentation
+*.md
+!README.md
 
-# MyPy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# Test files
+tests/
+test_*.py
+*_test.py
 
-# Docker
-docker-compose.override.yml
-
-# Keycloak
-keycloak/data/
-keycloak/themes/custom/
-.env.keycloak
-*.keycloak.env
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
 

@@ -1,24 +1,29 @@
-# 🔐 MCP Server with OAuth Authentication via Auth0
+# 🔐 MCP Server with OAuth Authentication
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastMCP](https://img.shields.io/badge/FastMCP-OIDC%20Proxy-green.svg)](https://gofastmcp.com/)
-[![Auth0](https://img.shields.io/badge/Auth0-OAuth%202.1-orange.svg)](https://auth0.com/)
+[![Auth0](https://img.shields.io/badge/Auth0-Supported-orange.svg)](https://auth0.com/)
+[![Keycloak](https://img.shields.io/badge/Keycloak-Supported-blue.svg)](https://www.keycloak.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP](https://img.shields.io/badge/MCP-Protocol-purple.svg)](https://modelcontextprotocol.io/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 
-> 🚀 A production-ready Model Context Protocol (MCP) server with OAuth 2.1 authentication using FastMCP's built-in OIDC Proxy and Auth0 as the identity provider.
+> 🚀 A production-ready Model Context Protocol (MCP) server with OAuth 2.1 authentication using FastMCP's built-in OIDC Proxy. Supports **Auth0** (SaaS) and **Keycloak** (self-hosted) as identity providers.
 
 ## ✨ Features
 
 - 🔒 **FastMCP OIDC Proxy**: Built-in OAuth authentication via [FastMCP's OIDCProxy](https://gofastmcp.com/servers/auth/oidc-proxy)
-- 🌐 **Auth0 Integration**: Pre-configured Auth0 provider for seamless authentication
-- 🔄 **Dynamic Client Registration**: Proxies DCR for Auth0 to work with Claude.ai
+- 🌐 **Dual Provider Support**: Choose between Auth0 (SaaS) or Keycloak (self-hosted)
+- 🐳 **Docker Ready**: Included docker-compose for local Keycloak setup
+- 🔄 **OAuth Discovery**: Automatic OAuth endpoints for Keycloak (`.well-known`, `/register`)
+- 🤖 **Dynamic Client Registration**: Full DCR support for OAuth clients
 - 🛠️ **Demo Tools**: Calculator and notes management tools for testing
 - 📡 **HTTP/SSE Transport**: Built-in server with automatic routing and auth
+- 🔍 **MCP Inspector**: Auto-discovery support for seamless testing
 
 ## 🏗️ Architecture
 
-FastMCP's OIDC Proxy acts as a bridge between Claude.ai and Auth0:
+FastMCP's OIDC Proxy acts as a bridge between Claude.ai and your chosen identity provider (Auth0 or Keycloak):
 
 ```
 ┌─────────────┐
@@ -36,21 +41,59 @@ FastMCP's OIDC Proxy acts as a bridge between Claude.ai and Auth0:
 │  - Protects MCP tools            │
 └──────────┬───────────────────────┘
            │
-           │ 2. OAuth with Auth0
+           │ 2. OAuth with IdP
            ↓
 ┌──────────────────────────────────┐
-│      Auth0 (IdP)                 │
+│  Identity Provider (IdP)         │
+│  - Auth0 or Keycloak             │
 │  - User authentication           │
 │  - Token issuance                │
 │  - OIDC discovery                │
 └──────────────────────────────────┘
 ```
 
+## 🔀 OAuth Provider Options
+
+This server supports multiple OAuth/OIDC providers:
+
+### 🌐 Auth0 (Default - SaaS)
+- ✅ **Quick Setup**: SaaS solution, ready in minutes
+- ✅ **Free Tier**: Great for development and small projects
+- ✅ **Managed**: No infrastructure to maintain
+- 💰 **Pricing**: Free for 7,500 MAUs, then per-user pricing
+- 📚 Configuration guide below
+
+### 🐳 Keycloak (Self-Hosted Alternative)
+- ✅ **Self-Hosted**: Full control over your auth infrastructure
+- ✅ **Open Source**: Free for unlimited users
+- ✅ **Docker Ready**: Included docker-compose setup
+- 💰 **Pricing**: Free (only hosting costs)
+- 📚 See [Keycloak Migration Guide](KEYCLOAK_MIGRATION_GUIDE.md)
+
+**Quick Start with Keycloak:**
+```bash
+# Start Keycloak with Docker
+docker-compose up -d
+
+# Run automated setup script
+./keycloak-setup.sh
+
+# Access Keycloak Admin Console
+# URL: http://localhost:8080
+# Credentials: admin / admin
+```
+
 ## 📋 Prerequisites
 
+### For Auth0 (Default)
 - 🐍 Python 3.10 or higher
 - 🔑 Auth0 account (free tier works)
 - ⚙️ Auth0 application configured with redirect URI
+
+### For Keycloak (Alternative)
+- 🐍 Python 3.10 or higher
+- 🐳 Docker and Docker Compose
+- 📝 See [KEYCLOAK_MIGRATION_GUIDE.md](KEYCLOAK_MIGRATION_GUIDE.md) for detailed setup
 
 ## 📦 Installation
 
@@ -311,19 +354,29 @@ See the complete [MCP Inspector Testing Guide](MCP_INSPECTOR_GUIDE.md).
 ```
 mcp-auth-oidcO/
 ├── src/
-│   ├── __init__.py           # Package initialization
-│   ├── auth_config.py        # Auth0Provider configuration
-│   ├── server.py             # FastMCP server with demo tools
-│   ├── app.py                # FastMCP app export
-│   └── main.py               # Main entry point
-├── .env                      # Environment variables (not in git)
-├── .gitignore               # Git ignore rules
-├── pyproject.toml           # Python project configuration
-├── requirements.txt         # Python dependencies
-├── run.py                   # Convenience script
-├── README.md               # This file
-├── QUICKSTART.md           # Quick start guide
-└── TESTING.md              # Testing guide
+│   ├── __init__.py                # Package initialization
+│   ├── auth_config.py             # Auth0Provider configuration
+│   ├── keycloak_auth_config.py    # KeycloakProvider configuration
+│   ├── server.py                  # FastMCP server with demo tools
+│   ├── app.py                     # FastMCP app export
+│   └── main.py                    # Main entry point
+├── docker-compose.yml             # Keycloak dev container (H2 database)
+├── docker-compose.prod.yml        # Keycloak prod setup (PostgreSQL)
+├── keycloak-setup.sh              # Automated Keycloak configuration script
+├── env.keycloak.example           # Keycloak environment template
+├── .env                           # Environment variables (not in git)
+├── .gitignore                     # Git ignore rules
+├── pyproject.toml                 # Python project configuration
+├── requirements.txt               # Python dependencies
+├── run.py                         # Convenience script
+├── README.md                      # This file
+├── KEYCLOAK_MIGRATION_GUIDE.md    # Complete Keycloak migration guide
+├── KEYCLOAK_QUICKSTART.md         # Quick 5-minute Keycloak setup
+├── MCP_INSPECTOR_GUIDE.md         # Inspector testing guide
+├── AUTH0_CHECKLIST.md             # Auth0 setup checklist
+├── QUICKSTART.md                  # Quick start guide
+├── TESTING.md                     # Testing guide
+└── TROUBLESHOOTING.md             # Troubleshooting guide
 ```
 
 ## 👨‍💻 Development
@@ -452,11 +505,21 @@ auth = Auth0Provider(
 
 ## 📚 References
 
+### 📖 Project Documentation
+- 🐳 [Keycloak Migration Guide](KEYCLOAK_MIGRATION_GUIDE.md) - Complete guide to switch to self-hosted Keycloak
+- 🔍 [MCP Inspector Testing Guide](MCP_INSPECTOR_GUIDE.md) - Comprehensive testing with MCP Inspector
+- 🧪 [Testing Guide](TESTING.md) - Test your OAuth implementation
+- 🚀 [Quick Start Guide](QUICKSTART.md) - Get up and running fast
+- 🔧 [Troubleshooting Guide](TROUBLESHOOTING.md) - Common issues and solutions
+- ✅ [Auth0 Checklist](AUTH0_CHECKLIST.md) - Auth0 setup checklist
+
+### 🌐 External Resources
 - 🚀 [FastMCP Documentation](https://gofastmcp.com/)
 - 🔐 [FastMCP OIDC Proxy Guide](https://gofastmcp.com/servers/auth/oidc-proxy)
 - 📖 [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
 - 🔒 [OAuth 2.1 Draft](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1)
 - 🌐 [Auth0 Documentation](https://auth0.com/docs)
+- 🔑 [Keycloak Documentation](https://www.keycloak.org/documentation)
 
 ## 📄 License
 
@@ -465,8 +528,9 @@ MIT License - feel free to use this as a template for your own MCP servers.
 ## 💬 Support
 
 For issues and questions:
-- 🚀 FastMCP: [GitHub Issues](https://github.com/jlowin/fastmcp/issues) | [Discord](https://discord.gg/prefect)
-- 🌐 Auth0: [Community Forum](https://community.auth0.com/)
+- 🚀 **FastMCP**: [GitHub Issues](https://github.com/jlowin/fastmcp/issues) | [Discord](https://discord.gg/prefect)
+- 🌐 **Auth0**: [Community Forum](https://community.auth0.com/)
+- 🔑 **Keycloak**: [GitHub Discussions](https://github.com/keycloak/keycloak/discussions)
 
 ## 🤝 Contributing
 
@@ -478,6 +542,6 @@ Contributions are welcome! Please feel free to submit pull requests or open issu
 
 **⭐ Star this repo if you find it helpful! ⭐**
 
-Made with ❤️ using [FastMCP](https://gofastmcp.com/) and [Auth0](https://auth0.com/)
+Made with ❤️ using [FastMCP](https://gofastmcp.com/), [Auth0](https://auth0.com/), and [Keycloak](https://www.keycloak.org/)
 
 </div>

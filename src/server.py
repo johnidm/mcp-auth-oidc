@@ -1,12 +1,15 @@
 """FastMCP server with demo tools (calculator and notes)."""
 
+import os
 from datetime import datetime
 from typing import Dict, List, Optional
 from fastmcp import FastMCP
-from src.auth_config import create_auth_provider
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from src.keycloak_auth_config import create_auth_provider
 
 
-# Create Auth0 authentication provider
+# Create authentication provider
 auth = create_auth_provider()
 
 # Initialize FastMCP server with authentication
@@ -15,6 +18,29 @@ mcp = FastMCP(
     version="0.1.0",
     auth=auth
 )
+
+# Add OAuth discovery endpoints if using Keycloak
+if os.getenv("KEYCLOAK_REALM"):
+    from src.oauth_endpoints import (
+        oauth_authorization_server,
+        openid_configuration,
+        register_client
+    )
+    
+    @mcp.custom_route("/.well-known/oauth-authorization-server", methods=["GET"])
+    async def oauth_server_metadata(request: Request):
+        """OAuth 2.0 Authorization Server Metadata."""
+        return await oauth_authorization_server(request)
+    
+    @mcp.custom_route("/.well-known/openid-configuration", methods=["GET"])
+    async def oidc_configuration(request: Request):
+        """OpenID Connect Discovery."""
+        return await openid_configuration(request)
+    
+    @mcp.custom_route("/register", methods=["POST", "OPTIONS"])
+    async def client_registration(request: Request):
+        """Dynamic Client Registration."""
+        return await register_client(request)
 
 # In-memory storage for notes (demo purposes only)
 notes_storage: Dict[str, Dict] = {}
