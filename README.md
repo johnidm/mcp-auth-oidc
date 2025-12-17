@@ -15,10 +15,11 @@
 - 🔒 **FastMCP OIDC Proxy**: Built-in OAuth authentication via [FastMCP's OIDCProxy](https://gofastmcp.com/servers/auth/oidc-proxy)
 - 🌐 **Dual Provider Support**: Choose between Auth0 (SaaS) or Keycloak (self-hosted)
 - 🐳 **Docker Ready**: Included docker-compose for local Keycloak setup
-- 🔄 **Dynamic Client Registration**: Proxies DCR for Auth0 to work with Claude.ai
+- 🔄 **OAuth Discovery**: Automatic OAuth endpoints for Keycloak (`.well-known`, `/register`)
+- 🤖 **Dynamic Client Registration**: Full DCR support for OAuth clients
 - 🛠️ **Demo Tools**: Calculator and notes management tools for testing
 - 📡 **HTTP/SSE Transport**: Built-in server with automatic routing and auth
-- 🔍 **MCP Inspector**: Pre-configured for interactive testing
+- 🔍 **MCP Inspector**: Auto-discovery support for seamless testing
 
 ## 🏗️ Architecture
 

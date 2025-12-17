@@ -1,4 +1,6 @@
 fastmcp
 uvicorn[standard]
 python-dotenv
+starlette
+httpx
 
